@@ -10,7 +10,6 @@ namespace App\Controller;
 
 use App\Manager\CommentManager;
 use App\Manager\PostManager;
-use App\Utilities\Paginator;
 use Core\Controller;
 use Core\View;
 
@@ -25,10 +24,7 @@ class PostController extends Controller
      */
     public function indexAction()
     {
-
        $posts = PostManager::getAll();
-        //$paginator = new Paginator(1, 4);
-       //$posts = PostManager::getPage($paginator->limit,$paginator->offset);
 
         View::renderTemplate('/Posts/index.html.twig', [
             'posts' => $posts,

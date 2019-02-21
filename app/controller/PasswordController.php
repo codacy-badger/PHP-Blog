@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 use App\Manager\UsersManager;
+use App\Utilities\Filter;
 use Core\Controller;
 use Core\View;
 
@@ -39,7 +40,8 @@ class PasswordController extends Controller
      */
     public function requestResetAction()
     {
-        UsersManager::sendPasswordReset($_POST['email']);
+        UsersManager::sendPasswordReset(Filter::filterInputEmail('email'));
+        //UsersManager::sendPasswordReset($_POST['email']);
 
         View::renderTemplate('Password/reset_requested.html.twig');
     }
@@ -74,11 +76,12 @@ class PasswordController extends Controller
      */
     public function resetPasswordAction()
     {
-        $token = $_POST['token'];
+        $token = Filter::filterInputString('token');
+        //$token = $_POST['token'];
 
         $user = $this->getUserOrExit($token);
 
-        if ($user->resetPassword($_POST['password'])) {
+        if ($user->resetPassword(Filter::filterInputString('password'))) { // $user->resetPassword($_POST['password'])
 
             View::renderTemplate('Password/reset_success.html.twig');
 

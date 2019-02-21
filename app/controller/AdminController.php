@@ -12,6 +12,7 @@ use App\Manager\CommentManager;
 use App\Manager\PostManager;
 use App\Manager\UsersManager;
 use App\Utilities\Auth;
+use App\Utilities\Filter;
 use App\Utilities\Flash;
 use Core\View;
 
@@ -84,11 +85,21 @@ class AdminController extends AuthenticatedController
     {
         $user = Auth::getUser();
 
-        if ($user->updateProfile($_POST)) {
+        $input = Filter::profileFilter();
+
+        //$user->updateProfile(filter_input_array(INPUT_POST, $input));
+
+        //var_dump($user);
+        //die();
+
+        if ($user->updateProfile(filter_input_array(INPUT_POST, $input))) {
+
             Flash::addMessage('Changes saved');
 
             $this->redirect('/admin/index');
+
         } else {
+
             View::renderTemplate('admin/edit.html', [
                 'user' => $user
             ]);
@@ -153,9 +164,10 @@ class AdminController extends AuthenticatedController
      */
     public function updateArticleAction()
     {
-        $post = new PostManager($_POST);
+        $filter = Filter::articleFilter();
+        $post = new PostManager(filter_input_array(INPUT_POST, $filter));
 
-        if ($post->update($_POST)) {
+        if ($post->update(filter_input_array(INPUT_POST, $filter))) {
             Flash::addMessage('the article was updated');
 
             $this->redirect('/admin/show-article');
@@ -187,13 +199,20 @@ class AdminController extends AuthenticatedController
      */
     public function deleteArticleConfirmationAction()
     {
-        $post = new PostManager($_POST);
+        $filter = Filter::articleFilter();
+        $post = new PostManager(filter_input_array(INPUT_POST, $filter));
+        //$post = new PostManager($_POST);
 
         if ($post->delete()) {
+
             Flash::addMessage('Article deleted');
             $this->redirect('/admin/show-article');
+
         } else {
-            echo 'pb';
+
+            View::renderTemplate('Admin/delete-article.html.twig' , [
+                'post' => $post
+            ]);
         }
     }
 
@@ -230,7 +249,8 @@ class AdminController extends AuthenticatedController
      */
     public function updateCommentAction()
     {
-        $commentId = $_POST['comment_id'];
+        $commentId = filter_input(INPUT_POST, 'comment_id', FILTER_SANITIZE_NUMBER_INT);
+        //$commentId = $_POST['comment_id'];
 
         CommentManager::update($commentId);
 
@@ -258,7 +278,8 @@ class AdminController extends AuthenticatedController
      */
     public function confirmDeleteCommentAction()
     {
-        $commentId = $_GET['comment_id'];
+        $commentId = filter_input(INPUT_POST, 'comment_id', FILTER_SANITIZE_NUMBER_INT);
+        //$commentId = $_GET['comment_id'];
 
         CommentManager::delete($commentId);
 

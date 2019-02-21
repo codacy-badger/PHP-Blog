@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Manager\HomeManager;
 use App\Model\Message;
+use App\Utilities\Filter;
 use App\Utilities\Mail;
 use Config\Config;
 use Core\Controller;
@@ -21,21 +22,23 @@ use Core\View;
  */
 class HomeController extends Controller
 {
+    /**
+     *
+     */
     public function indexAction()
     {
         View::renderTemplate('/Home/index.html.twig');
     }
 
+
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      *
-     * @return void
      */
     public function emailAction()
     {
-        $email = new HomeManager($_POST);
+        $filter = Filter::emailFilter();
+
+        $email = new HomeManager(filter_input_array(INPUT_POST, $filter));
 
         if ($email->sendEmailToAdmin()) {
 
@@ -54,12 +57,9 @@ class HomeController extends Controller
         }
     }
 
+
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      *
-     * @return void
      */
     public function successAction()
     {

@@ -8,7 +8,9 @@
 
 namespace App\Controller;
 
+use App\Model\User;
 use App\Utilities\Auth;
+use App\Utilities\Filter;
 use App\Utilities\Flash;
 use Core\Controller;
 use Core\View;
@@ -41,7 +43,8 @@ class LoginController extends Controller
      */
     public function createAction()
     {
-        $user = UsersManager::authenticate($_POST['email'], $_POST['password']);
+        //$user = UsersManager::authenticate($_POST['email'], $_POST['password']);
+        $user = UsersManager::authenticate(Filter::filterInputEmail('email'), Filter::filterInputString('password'));
 
         $remember_me = isset($_POST['remember_me']);
 
@@ -58,7 +61,7 @@ class LoginController extends Controller
         Flash::addMessage('Login unsuccessful, please try again', Flash::WARNING);
 
         View::renderTemplate('Login/new.html.twig', [
-            'email' => $_POST['email'],
+            'email' => Filter::filterInputEmail('email'), // $_POST['email']
             'remember_me' => $remember_me
         ]);
     }

@@ -19,6 +19,7 @@ class Mail
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             //Server settings
+
             $mail->SMTPDebug = 0;                                 // Enable verbose debug output
             $mail->isSMTP();                                      // Set mailer to use SMTP
             $mail->Host = Config::SMTP_HOST;  // Specify main and backup SMTP servers
@@ -30,15 +31,7 @@ class Mail
 
             //Recipients
             $mail->setFrom(Config::USER_NAME, 'John');
-            //$mail->addAddress('joe@example.net', 'Joe UsersManager');     // Add a recipient
             $mail->addAddress($to);               // Name is optional
-            //$mail->addReplyTo('info@example.com', 'Information');
-            //$mail->addCC('cc@example.com');
-            //$mail->addBCC('bcc@example.com');
-
-            //Attachments
-            //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-            //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
 
             //Content
             $mail->isHTML(true);                                  // Set email format to HTML
@@ -49,7 +42,7 @@ class Mail
             $mail->send();
             //echo 'Message has been sent';
         } catch (Exception $e) {
-            echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+            echo htmlentities('Message could not be sent. Mailer Error: '), $mail->ErrorInfo;
         }
     }
 }

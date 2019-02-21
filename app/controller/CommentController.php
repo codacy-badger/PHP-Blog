@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Manager\CommentManager;
 use App\Model\Comment;
+use App\Utilities\Filter;
 use Core\View;
 
 /**
@@ -23,7 +24,10 @@ class CommentController extends AuthenticatedController
      */
     public function createAction()
     {
-        $comments = new Comment($_POST);
+        $filter = Filter::commentFilter();
+        $comments = new Comment(filter_input_array(INPUT_POST, $filter));
+
+       // $comments = new Comment($_POST);
 
         $commentManager = new CommentManager();
 

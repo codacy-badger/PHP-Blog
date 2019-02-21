@@ -33,9 +33,6 @@ class Error
 
     /**
      * @param $exception
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
     public static function exceptionHandler($exception)
     {
@@ -47,12 +44,15 @@ class Error
         http_response_code($code);
 
         if (Config::SHOW_ERRORS) {
-            echo "<h1>Fatal error</h1>";
-            echo "<p>Uncaught exception: '" . get_class($exception) . "'</p>";
-            echo "<p>Message: '" . $exception->getMessage() . "'</p>";
-            echo "<p>Stack trace:<pre>" . $exception->getTraceAsString() . "</pre></p>";
-            echo "<p>Thrown in '" . $exception->getFile() . "' on line " . $exception->getLine() . "</p>";
+
+            echo htmlentities("<h1>Fatal error</h1>");
+            echo htmlentities("<p>Uncaught exception: '" . get_class($exception) . "'</p>");
+            echo htmlentities("<p>Message: '" . $exception->getMessage() . "'</p>");
+            echo htmlentities("<p>Stack trace:<pre>" . $exception->getTraceAsString() . "</pre></p>");
+            echo htmlentities("<p>Thrown in '" . $exception->getFile() . "' on line " . $exception->getLine() . "</p>");
+
         } else {
+
             $log = dirname(__DIR__) . '/log/' . date('Y-m-d') . '.txt';
             ini_set('error_log', $log);
 
@@ -61,15 +61,8 @@ class Error
             $message .= "\nStack trace: " . $exception->getTraceAsString();
             $message .= "\nThrown in '" . $exception->getFile() . "' on line " . $exception->getLine();
 
-            error_log($message);
-            //echo "<h1>An error occurred</h1>";
-            /*
-            if ($code == 404) {
-                echo "<h1>Page not found</h1>";
-            } else {
-                echo "<h1>An error occurred</h1>";
-            }
-            */
+            error_log(htmlentities($message));
+
             View::renderTemplate($code . '.html');
         }
     }

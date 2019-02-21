@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 use App\Manager\UsersManager;
+use App\Utilities\Filter;
 use Core\Controller;
 use Core\View;
 
@@ -30,7 +31,13 @@ class SignupController extends Controller
 
     public function createAction()
     {
-        $user = new UsersManager($_POST);
+        $filter = Filter::profileFilter();
+
+        $user = new UsersManager(filter_input_array(INPUT_POST, $filter));
+
+        //$user = new UsersManager($_POST);
+        //var_dump($user);
+        //die();
 
         if ($user->save()) {
 

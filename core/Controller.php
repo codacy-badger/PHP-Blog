@@ -9,6 +9,7 @@
 namespace Core;
 
 use App\Utilities\Auth;
+use App\Utilities\Filter;
 use App\Utilities\Flash;
 
 /**
@@ -95,8 +96,9 @@ abstract class Controller
      */
     public function redirect($url)
     {
-        header('Location: http://' . $_SERVER['HTTP_HOST'] . $url, true, 303);
-        exit;
+        header(Filter::redirectFilter('HTTP_HOST') . $url, true, 303);
+       // header('Location: http://' . $_SERVER['HTTP_HOST'] . $url, true, 303);
+        exit();
     }
 
     /**
